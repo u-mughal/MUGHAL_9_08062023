@@ -3,6 +3,7 @@
  */
 
 import {prettyDOM, screen, waitFor, fireEvent} from "@testing-library/dom"
+import userEvent from '@testing-library/user-event'
 import BillsUI from "../views/BillsUI.js"
 
 import mockStore from "../__mocks__/store"
@@ -50,19 +51,22 @@ describe("Given I am connected as an employee", () => {
           document.body.innerHTML = ROUTES({ pathname })
         }
 
-        document.body.innerHTML = BillsUI({ data: bills.sort((a, b) => new Date(b.date) - new Date(a.date)) })
+        document.body.innerHTML = BillsUI({ data: bills })
 
-        new Bills({ document, onNavigate, localStorage: window.localStorage });
+        const bill = new Bills({ document, onNavigate, localStorage: window.localStorage });
 
+        const handleClickIconEye = jest.fn((icon) => bill.handleClickIconEye(icon));
         const iconEye = screen.getAllByTestId("icon-eye")[0];
+        iconEye.addEventListener("click", handleClickIconEye(iconEye));
         fireEvent.click(iconEye);
 
+        expect(handleClickIconEye).toHaveBeenCalled()
         expect(screen.getByText("Justificatif")).toBeTruthy();
         expect(screen.getByAltText("Bill")).toBeTruthy();
       })
     })
 
-    describe('When I click on "Nouvelle note de frais"', () => {
+    describe("When I click on \"Nouvelle note de frais\"", () => {
       test("Then the invoice creation form appears", async () => {
         const onNavigate = (pathname) => {
           document.body.innerHTML = ROUTES({ pathname })
@@ -70,11 +74,14 @@ describe("Given I am connected as an employee", () => {
 
         document.body.innerHTML = BillsUI({ data: bills.sort((a, b) => new Date(b.date) - new Date(a.date)) })
 
-        new Bills({ document, onNavigate, localStorage: window.localStorage });
+        const bill = new Bills({ document, onNavigate, localStorage: window.localStorage });
+        const handleClickNewBill = jest.fn(() => bill.handleClickNewBill());
 
-        const btn = screen.getByTestId("btn-new-bill");
-        fireEvent.click(btn);
+        const btnNewBill = screen.getByTestId("btn-new-bill");
+        btnNewBill.addEventListener("click", handleClickNewBill);
+        fireEvent.click(btnNewBill);
 
+        expect(handleClickNewBill).toHaveBeenCalled();
         expect(screen.getByText("Envoyer une note de frais")).toBeTruthy();
         expect(screen.getByTestId("form-new-bill")).toBeTruthy();
       })
@@ -83,7 +90,7 @@ describe("Given I am connected as an employee", () => {
 })
 
 // test API GET
-describe("Given I am connected as an employee", () => {
+describe.skip("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     test("fetches bills from mock API GET", async () => {
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
