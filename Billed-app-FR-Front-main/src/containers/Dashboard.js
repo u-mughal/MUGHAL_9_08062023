@@ -97,15 +97,15 @@ export default class {
       $('.vertical-navbar').css({ height: '150vh' })
       this.counter++
     }
-    // } else {
-    //   $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
+    else {
+      $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
 
-    //   $('.dashboard-right-container div').html(`
-    //     <div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>
-    //   `)
-    //   $('.vertical-navbar').css({ height: '120vh' })
-    //   this.counter ++
-    // }
+      $('.dashboard-right-container div').html(`
+        <div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>
+      `)
+      $('.vertical-navbar').css({ height: '120vh' })
+      this.counter ++
+    }
     $('#icon-eye-d').click(this.handleClickIconEye)
     $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
     $('#btn-refuse-bill').click((e) => this.handleRefuseSubmit(e, bill))
@@ -147,7 +147,7 @@ export default class {
     }
 
     bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+      $(`#open-bill${bill.id}`).off().on().click((e) => this.handleEditTicket(e, bill, bills))
     })
 
     return bills
